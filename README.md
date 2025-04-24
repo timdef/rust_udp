@@ -1,17 +1,10 @@
 # Baby Steps with Rust - UDP Datagram
 
-Hey there! I'm Tim. I primarily work as a Ruby on Rails developer, but I've been excited by Rust for a long time. And I have dabbled. Oh, how I have dabbled. But recently I've felt like it was time to write some more substantial Rust code, so I came up with some babysteps...
-
-Any this is the first babystep! .
-
 One thing that attracts me to Rust is that it is a systems language that you can also comfortably write web apps in. So, I wanted to start with something systems-y, but very small. Something with bytes! This led me to chose a very simple networking protocol: UDP.
 
 UDP is User Datagram Protocol, and was created as part of the Internet Protocol Suite.
 
-Breaking down its name further we learn that:
-- User - highlights that this protocol is for the User or Application layer
-- Datagram - is the unit of information we're dealing with. Different networking protocols use different terminologies for their units, and *Datagram* denotes that this unit is self-contained and doesn't rely on previous message exchanges.
-- Protocol - Prooooootocol.
+Different networking protocols use different terminologies for their units, and *Datagram* denotes that this unit is self-contained and doesn't rely on previous message exchanges.
 
 Today UDP is used where speed and low latency is more important than every single piece of data being delivered. Think streaming media and online gaming. Applications where you can afford to drop a message if it means that you can keep latency low.
 
@@ -23,7 +16,7 @@ Heck yeah. Babysteps.
 I really like his blog post "udp and me", link below.
 [dpr » udp and me](https://web.archive.org/web/20180919085731/https://www.deepplum.com/blog-dpr/?page_id=6)
 
-We can see in the original RFC for it there's not too much to it. Perfect for dipping our toes into modeling data in Rust.
+We can see in the original RFC there's not too much to it. Perfect for dipping our toes into modeling data in Rust.
 [RFC 768: User Datagram Protocol](https://www.rfc-editor.org/rfc/rfc768)
 
 This RFC really takes a turn.
@@ -95,7 +88,7 @@ By implementing the 'TryFrom' trait we will get some stuff for free.
 
 Not only do we get the method we're looking for to go from bytes to datagram but we also get `try_into()` to call on bytes.
 
-```
+```rust
 // Using TryFrom (destination-focused)
 let datagram = UdpDatagram::try_from(&bytes[..])?; 
 // Using TryInto (source-focused) 
@@ -111,9 +104,9 @@ The conversion code itself is pretty simple.
 We know we have a Vector of bytes, the protocol tells us the order they are in, we just need to convert them into integers (and wrap them into their type in the case of Port)
 
 `from_be_byte` stands for from **big endian** bytes
-Big endian is when the most significant byte is on the left, the same that we write numbers.
+Big endian is when the most significant bit is on the left, the same that we write numbers.
 
-For all standard internet protocols, the bytes are sent in big endian, in fact this is also called 'network byte order' - which is the opposite of what most computer CPU's utilize which is 'little endian byte order' where the least significant digit comes first.
+For all standard internet protocols, the bytes are sent in big endian, in fact this is also called 'network byte order' - which is the opposite of what most computer CPU's utilize which is 'little endian byte order' where the least significant bit comes first.
 
 As always we sit atop of bytes, and we get to decide what they mean. Some of this is for performance (you can do addition faster with little endian) but some is historical happenstance.
 
