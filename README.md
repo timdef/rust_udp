@@ -104,9 +104,9 @@ The conversion code itself is pretty simple.
 We know we have a Vector of bytes, the protocol tells us the order they are in, we just need to convert them into integers (and wrap them into their type in the case of Port)
 
 `from_be_byte` stands for from **big endian** bytes
-Big endian is when the most significant bit is on the left, the same that we write numbers.
+Big endian is when the most significant byte is on the left, the same that we write numbers.
 
-For all standard internet protocols, the bytes are sent in big endian, in fact this is also called 'network byte order' - which is the opposite of what most computer CPU's utilize which is 'little endian byte order' where the least significant bit comes first.
+For all standard internet protocols, the bytes are sent in big endian, in fact this is also called 'network byte order' - which is the opposite of what most computer CPU's utilize which is 'little endian byte order' where the least significant digit comes first.
 
 As always we sit atop of bytes, and we get to decide what they mean. Some of this is for performance (you can do addition faster with little endian) but some is historical happenstance.
 
