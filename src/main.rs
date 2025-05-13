@@ -54,9 +54,9 @@ fn main() {
                 "Source: {} Destination: {}, Length: {}, Checksum: {:b}",
                 datagram.source.0, datagram.destination.0, datagram.length, datagram.checksum
             );
-            println!("Secret message: {}\n\n", datagram);
+            println!("Secret message: {datagram}\n\n");
         }
-        Err(e) => println!("Failed to parse datagram: {}", e),
+        Err(e) => println!("Failed to parse datagram: {e}"),
     }
 }
 

@@ -13,3 +13,4 @@ unwrap_used = "warn"
 enum_glob_use = { level = "deny", priority = 1 }
 pedantic = { level = "deny", priority = -1 }
 nursery = { level = "deny", priority = -1 }
+unreadable_literal = "allow"

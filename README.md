@@ -4,14 +4,17 @@ One thing that attracts me to Rust is that it is a systems language that you can
 
 UDP is User Datagram Protocol, and was created as part of the Internet Protocol Suite.
 
-Different networking protocols use different terminologies for their units, and *Datagram* denotes that this unit is self-contained and doesn't rely on previous message exchanges.
+A datagram is a data telegram. It has a header and a payload. It doesn't depend on other messages, and doesn't need to acknowledge it has been recieved making it unreliable in certain ways.
+
+Slide:
+> "A self-contained, independent entity of data carrying sufficient information to be routed from the source to the destination computer without reliance on earlier exchanges between this source and destination computer and the transporting network."
+
+— RFC 1594
 
 Today UDP is used where speed and low latency is more important than every single piece of data being delivered. Think streaming media and online gaming. Applications where you can afford to drop a message if it means that you can keep latency low.
 
 One of its designers , David P. Reed, had this to say:
 > UDP was actually “designed” in 30 minutes on a blackboard when we decided pull the original TCP protocol apart into TCP and IP...
-
-Heck yeah. Babysteps.
 
 I really like his blog post "udp and me", link below.
 [dpr » udp and me](https://web.archive.org/web/20180919085731/https://www.deepplum.com/blog-dpr/?page_id=6)
@@ -24,13 +27,16 @@ This RFC really takes a turn.
 - Destination Port: two bytes - same deal
 - Length: totally expected - length in *octets* of this user datagram including header and data.
 Cool piece of trivia, old networking RFC's use the word 'octets' because at the time not all bytes were 8 bits long 
+
+
+
 slide: Coding horror
 
 but then we have..
 Checksum
 > Checksum is the 16-bit one's complement of the one's complement sum of a pseudo header of information from the IP header, the UDP header, and the data,  padded  with zero octets  at the end (if necessary)  to  make a multiple of two octets.
 
-Happily, the RFC also says that "an all 0 checksum value means that the transmitter generated no checksum  (for debugging or for higher level protocols that don't care)."
+Happily, the RFC also says that "an all 0 checksum value means that the transmitter generated no checksum (for debugging or for higher level protocols that don't care)."
 
 Um, going to say that's its another two byte long value, though perhaps I will expand later, because it is pretty cool... The result will be all one's if if the checksum is correct!
 Slide: "Feeling cute, might implement later"
@@ -47,7 +53,7 @@ To describe the top level element here we will use a struct called 'UdpDatagram'
 
 What we're going to do is parse a collection of bytes into a collection of (hopefully) well-modeled fields.
 
-A **struct** (short for structure) is a way to keep related data under the same roof. A named collection of fields, which can have thier own type.
+A **struct** (short for structure) is a way to keep related data under the same roof. A named collection of fields, which can each have thier own type.
 They come in a couple different flavors, but the main one we are going to use is very similar to the struct in C and a bunch of other languages.
 
 The fields for this are pretty clear, they're the ones defined in the RFC.
@@ -86,7 +92,7 @@ We'll use TryFrom because UDP Datagrams can become corrupted in transit and we w
 
 By implementing the 'TryFrom' trait we will get some stuff for free.
 
-Not only do we get the method we're looking for to go from bytes to datagram but we also get `try_into()` to call on bytes.
+ we also get `try_into()` to call on bytes.
 
 ```rust
 // Using TryFrom (destination-focused)
@@ -108,7 +114,9 @@ Big endian is when the most significant byte is on the left, the same that we wr
 
 For all standard internet protocols, the bytes are sent in big endian, in fact this is also called 'network byte order' - which is the opposite of what most computer CPU's utilize which is 'little endian byte order' where the least significant digit comes first.
 
-As always we sit atop of bytes, and we get to decide what they mean. Some of this is for performance (you can do addition faster with little endian) but some is historical happenstance.
+As always we sit atop of bytes, and we get to decide what they mean. 
+
+Some of this is for performance (you can do addition faster with little endian) but some is historical happenstance.
 
 But I digress.
 
@@ -118,7 +126,9 @@ If we were super slick we wouldn't make a new copy of this data. But I am not sl
 
 Sidebar: 
 This is one of my long term learning tips: the farther you are outside of your domain the simpler you should make things. 
+
 If I wanted to avoid creating a new Vec here I would shortchange some other learning (or dawdle too long on this program) and I doubt it is worth it. 
+
 By all means play 'the full game' (which in this case means knowing that lifetimes exist and having a fuzzy idea what they are about) BUT know when there is enough on your plate. 
 I am better knowing all the other concepts that are in the air here than getting a (poor) understanding of yet another one.
 
